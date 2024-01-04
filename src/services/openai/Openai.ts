@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
-import { IOpenai } from './Openai.types.js';
 import { createReadStream } from 'fs';
+import { IOpenai } from './Openai.types.js';
 import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 
 export class Openai implements IOpenai {
@@ -15,38 +15,40 @@ export class Openai implements IOpenai {
 		this.openai = openai;
 	}
 
-	async chat(messages: ChatCompletionMessageParam[]): Promise<string | null> {
+	async chat(messages: ChatCompletionMessageParam[]): Promise<string> {
 		try {
 			const response = await this.openai.chat.completions.create({
 				messages,
 				model: 'gpt-3.5-turbo'
 			});
-			return response.choices[0].message.content;
+			const result: string | null = response.choices[0].message.content;
+
+			if (result) return result;
+
+			throw new Error('Empty chat completion');
 		} catch (error) {
-			console.error(
-				'Error while handling text request',
-				(error as Error).message
+			throw new Error(
+				`Error while creating chat completion ${
+					(error as Error).message
+				}`
 			);
-			return null;
 		}
 	}
 
-	async transcription(filepath: string): Promise<string | undefined> {
+	async transcription(filepath: string): Promise<string> {
 		try {
 			const response = await this.openai.audio.transcriptions.create({
 				file: createReadStream(filepath),
 				model: 'whisper-1'
 			});
 
-			console.log(response.text);
+			if (response.text) return response.text;
 
-			return response.text;
+			throw new Error('Empty transcription');
 		} catch (error) {
-			console.error(
-				'Error while creating transcription',
-				(error as Error).message
+			throw new Error(
+				`Error while creating transcription ${(error as Error).message}`
 			);
-			return undefined;
 		}
 	}
 }

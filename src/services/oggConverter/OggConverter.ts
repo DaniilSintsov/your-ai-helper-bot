@@ -14,10 +14,7 @@ export class OggConverter implements IOggConverter {
 		ffmpeg.setFfmpegPath(installer.path);
 	}
 
-	async toMp3(
-		oggPath: string,
-		outputFilename: string
-	): Promise<string | undefined> {
+	async toMp3(oggPath: string, outputFilename: string): Promise<string> {
 		try {
 			const outputPath = resolve(
 				dirname(oggPath),
@@ -36,12 +33,13 @@ export class OggConverter implements IOggConverter {
 					.run();
 			});
 		} catch (error) {
-			console.error('Error while creating mp3', (error as Error).message);
-			return undefined;
+			throw new Error(
+				`Error while creating mp3 ${(error as Error).message}`
+			);
 		}
 	}
 
-	async create(url: string, filename: string): Promise<string | undefined> {
+	async create(url: string, filename: string): Promise<string> {
 		try {
 			const oggPath: string = resolve(
 				__dirname,
@@ -60,8 +58,9 @@ export class OggConverter implements IOggConverter {
 				stream.on('finish', () => resolve(oggPath));
 			});
 		} catch (error) {
-			console.error('Error while creating ogg', (error as Error).message);
-			return undefined;
+			throw new Error(
+				`Error while creating ogg ${(error as Error).message}`
+			);
 		}
 	}
 }

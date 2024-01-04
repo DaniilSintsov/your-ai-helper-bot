@@ -1,8 +1,8 @@
 import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 
 export interface IOpenai {
-	transcription(filepath: string): Promise<string | undefined>;
-	chat(messages: ChatCompletionMessageParam[]): Promise<string | null>;
+	transcription(filepath: string): Promise<string>;
+	chat(messages: ChatCompletionMessageParam[]): Promise<string>;
 }
 
 export enum ChatRoles {
