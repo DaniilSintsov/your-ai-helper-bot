@@ -1,6 +1,11 @@
-node_modules
-/build
+node_modules/
+venv/
+/build/
 .env
+.vscode/
+
+# media files
 *.ogg
 *.mp3
-.vscode
+*.mp4
+*.jpg

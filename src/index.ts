@@ -64,14 +64,13 @@ bot.on(message('voice'), async ctx => {
 		await loader.hide();
 
 		await ctx.reply(text);
-	} catch (error) {
+	} catch (error: unknown) {
 		await loader.hide();
 		await ctx.reply(italic(ERROR_REPLIES.transcription));
 
-		console.error(
-			'Error while handling voice message',
-			(error as Error).message
-		);
+		if (error instanceof Error) {
+			console.error('Error while handling voice message', error.message);
+		}
 	}
 });
 
@@ -98,14 +97,13 @@ bot.on(message('text'), async ctx => {
 		await loader.hide();
 
 		await ctx.replyWithMarkdown(response);
-	} catch (error) {
+	} catch (error: unknown) {
 		await loader.hide();
 		await ctx.reply(italic(ERROR_REPLIES.chat));
 
-		console.error(
-			'Error while handling text message',
-			(error as Error).message
-		);
+		if (error instanceof Error) {
+			console.error('Error while handling text message', error.message);
+		}
 	}
 });
 

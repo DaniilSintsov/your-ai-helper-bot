@@ -37,11 +37,13 @@ export class Loader implements ILoader {
 						undefined,
 						this.icons[index]
 					);
-				} catch (error) {
-					console.error(
-						'Error while showing loader',
-						(error as Error).message
-					);
+				} catch (error: unknown) {
+					if (error instanceof Error) {
+						console.error(
+							'Error while showing loader',
+							error.message
+						);
+					}
 				}
 			}
 		}, LOADER_INTERVAL);
@@ -64,11 +66,10 @@ export class Loader implements ILoader {
 					this.textMessage?.message_id
 				);
 			}
-		} catch (error) {
-			console.error(
-				'Error while hiding loader',
-				(error as Error).message
-			);
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				console.error('Error while hiding loader', error.message);
+			}
 		}
 	}
 }
