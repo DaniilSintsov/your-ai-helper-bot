@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import { createWriteStream } from 'fs';
 import { dirname, resolve } from 'path';
 import installer from '@ffmpeg-installer/ffmpeg';
-import { IOggConverter } from './OggConverter.types.js';
+import { IOggConverter } from './oggConverter.types.js';
 import { removeFile } from '../../helpers/removeFile.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -16,10 +16,7 @@ export class OggConverter implements IOggConverter {
 
 	async toMp3(oggPath: string, outputFilename: string): Promise<string> {
 		try {
-			const outputPath = resolve(
-				dirname(oggPath),
-				`${outputFilename}.mp3`
-			);
+			const outputPath = resolve(dirname(oggPath), `${outputFilename}.mp3`);
 
 			return new Promise((resolve, reject) => {
 				ffmpeg(oggPath)
@@ -32,24 +29,18 @@ export class OggConverter implements IOggConverter {
 					.on('error', error => reject((error as Error).message))
 					.run();
 			});
-		} catch (error) {
-			throw new Error(
-				`Error while creating mp3 ${(error as Error).message}`
-			);
+		} catch (error: unknown) {
+			throw new Error(`Error while creating mp3 ${error instanceof Error && error.message}`);
 		}
 	}
 
 	async create(url: string, filename: string): Promise<string> {
 		try {
-			const oggPath: string = resolve(
-				__dirname,
-				'../../../voices',
-				`${filename}.ogg`
-			);
+			const oggPath: string = resolve(__dirname, '../../../voices', `${filename}.ogg`);
 			const response = await axios({
 				url,
 				method: 'get',
-				responseType: 'stream'
+				responseType: 'stream',
 			});
 
 			return new Promise(resolve => {
@@ -58,9 +49,7 @@ export class OggConverter implements IOggConverter {
 				stream.on('finish', () => resolve(oggPath));
 			});
 		} catch (error) {
-			throw new Error(
-				`Error while creating ogg ${(error as Error).message}`
-			);
+			throw new Error(`Error while creating ogg ${error instanceof Error && error.message}`);
 		}
 	}
 }

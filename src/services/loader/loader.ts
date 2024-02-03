@@ -1,22 +1,18 @@
-import { Context } from 'telegraf';
-import {
-	LOADER_ICONS,
-	LOADER_INTERVAL,
-	STANDARD_REPLIES
-} from '../../constants/botInitials.js';
+import { LOADER_ICONS, LOADER_INTERVAL, STANDARD_REPLIES } from '../../constants/botInitials.js';
 import { Message } from 'telegraf/types';
 import { italic } from 'telegraf/format';
-import { ILoader } from './Loader.types.js';
+import { ILoader } from './loader.types.js';
+import { ICtxWithSession } from '../../types.js';
 
 export class Loader implements ILoader {
 	private icons: string[] = LOADER_ICONS;
 	private textForMessage: string = STANDARD_REPLIES.loader;
-	private ctx: Context;
+	private ctx: ICtxWithSession;
 	private textMessage: Message | null = null;
 	private iconMessage: Message | null = null;
 	private interval: NodeJS.Timeout | null = null;
 
-	constructor(ctx: Context) {
+	constructor(ctx: ICtxWithSession) {
 		this.ctx = ctx;
 	}
 
@@ -35,14 +31,11 @@ export class Loader implements ILoader {
 						this.ctx.chat?.id,
 						this.iconMessage?.message_id,
 						undefined,
-						this.icons[index]
+						this.icons[index],
 					);
 				} catch (error: unknown) {
 					if (error instanceof Error) {
-						console.error(
-							'Error while showing loader',
-							error.message
-						);
+						console.error('Error while showing loader', error.message);
 					}
 				}
 			}
@@ -52,18 +45,14 @@ export class Loader implements ILoader {
 	async hide(): Promise<void> {
 		try {
 			if (this.interval) clearInterval(this.interval);
-			if (
-				this.ctx.chat?.id &&
-				this.iconMessage?.message_id &&
-				this.textMessage?.message_id
-			) {
+			if (this.ctx.chat?.id && this.iconMessage?.message_id && this.textMessage?.message_id) {
 				await this.ctx.telegram.deleteMessage(
 					this.ctx.chat?.id,
-					this.iconMessage?.message_id
+					this.iconMessage?.message_id,
 				);
 				await this.ctx.telegram.deleteMessage(
 					this.ctx.chat?.id,
-					this.textMessage?.message_id
+					this.textMessage?.message_id,
 				);
 			}
 		} catch (error: unknown) {

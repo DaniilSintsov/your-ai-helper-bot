@@ -1,53 +1,52 @@
 import OpenAI from 'openai';
 import { createReadStream } from 'fs';
-import { IOpenai } from './Openai.types.js';
+import { IOpenai } from './openai.types.js';
 import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
+import { injectable } from 'inversify';
+import 'reflect-metadata';
 
+@injectable()
 export class Openai implements IOpenai {
 	private openai: OpenAI;
 
 	constructor(apiKey: string, apiBase: string) {
-		const openai = new OpenAI({
+		this.openai = new OpenAI({
 			apiKey,
-			baseURL: apiBase
+			baseURL: apiBase,
 		});
-
-		this.openai = openai;
 	}
 
-	async chat(messages: ChatCompletionMessageParam[]): Promise<string> {
+	public async chat(messages: ChatCompletionMessageParam[]): Promise<string> {
 		try {
 			const response = await this.openai.chat.completions.create({
 				messages,
-				model: 'gpt-3.5-turbo'
+				model: 'gpt-3.5-turbo',
 			});
 			const result: string | null = response.choices[0].message.content;
 
 			if (result) return result;
 
 			throw new Error('Empty chat completion');
-		} catch (error) {
+		} catch (error: unknown) {
 			throw new Error(
-				`Error while creating chat completion ${
-					(error as Error).message
-				}`
+				`Error while creating chat completion ${error instanceof Error && error.message}`,
 			);
 		}
 	}
 
-	async transcription(filepath: string): Promise<string> {
+	public async transcription(filepath: string): Promise<string> {
 		try {
 			const response = await this.openai.audio.transcriptions.create({
 				file: createReadStream(filepath),
-				model: 'whisper-1'
+				model: 'whisper-1',
 			});
 
 			if (response.text) return response.text;
 
 			throw new Error('Empty transcription');
-		} catch (error) {
+		} catch (error: unknown) {
 			throw new Error(
-				`Error while creating transcription ${(error as Error).message}`
+				`Error while creating transcription ${error instanceof Error && error.message}`,
 			);
 		}
 	}
