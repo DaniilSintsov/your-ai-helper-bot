@@ -2,7 +2,6 @@ import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
 import 'dotenv/config';
 import { ICtxWithSession, TYPES } from './types.js';
-import { ILogger } from './services/logger/logger.types.js';
 import { session, Telegraf } from 'telegraf';
 import { message } from 'telegraf/filters';
 import { ICommandController } from './controllers/command/command.types.js';
@@ -13,7 +12,6 @@ export class App {
 	private bot: Telegraf<ICtxWithSession>;
 
 	constructor(
-		@inject(TYPES.Logger) private readonly logger: ILogger,
 		@inject(TYPES.CommandController) private readonly commandController: ICommandController,
 		@inject(TYPES.MessageController) private readonly messageController: IMessageController,
 	) {

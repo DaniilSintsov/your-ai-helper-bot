@@ -5,12 +5,12 @@ import { injectable } from 'inversify';
 
 @injectable()
 export class LoggerService implements ILogger {
-	private readonly logObj: { name: string };
-	private logger: Logger<typeof this.logObj>;
+	private readonly loggerConfig: { name: string };
+	private logger: Logger<typeof this.loggerConfig>;
 
 	constructor() {
-		this.logObj = { name: 'appLogger' };
-		this.logger = new Logger(this.logObj);
+		this.loggerConfig = { name: 'MainLogger' };
+		this.logger = new Logger(this.loggerConfig);
 	}
 
 	log(...args: unknown[]): void {

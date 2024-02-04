@@ -3,18 +3,19 @@ import { Message } from 'telegraf/types';
 import { italic } from 'telegraf/format';
 import { ILoader } from './loader.types.js';
 import { ICtxWithSession } from '../../types.js';
+import { ILogger } from '../logger/logger.types.js';
 
 export class Loader implements ILoader {
 	private icons: string[] = LOADER_ICONS;
 	private textForMessage: string = STANDARD_REPLIES.loader;
-	private ctx: ICtxWithSession;
 	private textMessage: Message | null = null;
 	private iconMessage: Message | null = null;
 	private interval: NodeJS.Timeout | null = null;
 
-	constructor(ctx: ICtxWithSession) {
-		this.ctx = ctx;
-	}
+	constructor(
+		private ctx: ICtxWithSession,
+		private readonly logger: ILogger,
+	) {}
 
 	async show(): Promise<void> {
 		let index = 0;
@@ -34,9 +35,9 @@ export class Loader implements ILoader {
 						this.icons[index],
 					);
 				} catch (error: unknown) {
-					if (error instanceof Error) {
-						console.error('Error while showing loader', error.message);
-					}
+					this.logger.error(
+						`Error while showing loader ${error instanceof Error && error.message}`,
+					);
 				}
 			}
 		}, LOADER_INTERVAL);
@@ -56,9 +57,9 @@ export class Loader implements ILoader {
 				);
 			}
 		} catch (error: unknown) {
-			if (error instanceof Error) {
-				console.error('Error while hiding loader', error.message);
-			}
+			this.logger.error(
+				`Error while hiding loader ${error instanceof Error && error.message}`,
+			);
 		}
 	}
 }

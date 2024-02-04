@@ -6,9 +6,10 @@ import { App } from './app.js';
 export const TYPES = {
 	App: Symbol.for('App'),
 	Logger: Symbol.for('Logger'),
-	Loader: Symbol.for('Loader'),
+	OggConverter: Symbol.for('OggConverter'),
 	CommandController: Symbol.for('CommandController'),
 	MessageController: Symbol.for('MessageController'),
+	MessageService: Symbol.for('MessageService'),
 	Openai: Symbol.for('Openai'),
 };
 

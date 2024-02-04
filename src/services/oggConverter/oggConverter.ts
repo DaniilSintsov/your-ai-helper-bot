@@ -6,11 +6,15 @@ import { dirname, resolve } from 'path';
 import installer from '@ffmpeg-installer/ffmpeg';
 import { IOggConverter } from './oggConverter.types.js';
 import { removeFile } from '../../helpers/removeFile.js';
+import { inject, injectable } from 'inversify';
+import { TYPES } from '../../types.js';
+import { ILogger } from '../logger/logger.types.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+@injectable()
 export class OggConverter implements IOggConverter {
-	constructor() {
+	constructor(@inject(TYPES.Logger) private readonly logger: ILogger) {
 		ffmpeg.setFfmpegPath(installer.path);
 	}
 
@@ -23,10 +27,10 @@ export class OggConverter implements IOggConverter {
 					.inputOption('-t 30')
 					.output(outputPath)
 					.on('end', () => {
-						removeFile(oggPath);
+						removeFile(oggPath, this.logger);
 						resolve(outputPath);
 					})
-					.on('error', error => reject((error as Error).message))
+					.on('error', error => reject(error instanceof Error ? error.message : error))
 					.run();
 			});
 		} catch (error: unknown) {
@@ -48,7 +52,7 @@ export class OggConverter implements IOggConverter {
 				response.data.pipe(stream);
 				stream.on('finish', () => resolve(oggPath));
 			});
-		} catch (error) {
+		} catch (error: unknown) {
 			throw new Error(`Error while creating ogg ${error instanceof Error && error.message}`);
 		}
 	}

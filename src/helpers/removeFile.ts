@@ -1,11 +1,12 @@
 import { unlink } from 'fs/promises';
+import { ILogger } from '../services/logger/logger.types.js';
 
-export async function removeFile(path: string): Promise<void> {
+export async function removeFile(path: string, logger: ILogger): Promise<void> {
 	try {
 		await unlink(path);
 	} catch (error: unknown) {
 		if (error instanceof Error) {
-			console.error('Error while removing file', error.message);
+			logger.error('Error while removing file', error.message);
 		}
 	}
 }
