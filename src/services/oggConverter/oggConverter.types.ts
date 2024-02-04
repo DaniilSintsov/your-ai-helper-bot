@@ -1,5 +1,11 @@
 export interface IOggConverter {
-	create(url: string, filename: string): Promise<string>;
+	createOgg(url: string, filename: string): Promise<string>;
 
-	toMp3(oggPath: string, outputFilename: string): Promise<string>;
+	convert(
+		oggPath: string,
+		outputFilename: string,
+		outputFormat: ConverterFormat,
+	): Promise<string>;
 }
+
+export type ConverterFormat = 'mp3' | 'ogg';

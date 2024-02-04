@@ -36,7 +36,7 @@ export class Loader implements ILoader {
 					);
 				} catch (error: unknown) {
 					this.logger.error(
-						`Error while showing loader ${error instanceof Error && error.message}`,
+						`Error while showing loader ${error instanceof Error ? error.message : error}`,
 					);
 				}
 			}
@@ -58,7 +58,7 @@ export class Loader implements ILoader {
 			}
 		} catch (error: unknown) {
 			this.logger.error(
-				`Error while hiding loader ${error instanceof Error && error.message}`,
+				`Error while hiding loader ${error instanceof Error ? error.message : error}`,
 			);
 		}
 	}

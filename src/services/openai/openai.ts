@@ -9,7 +9,7 @@ import 'reflect-metadata';
 export class Openai implements IOpenai {
 	private openai: OpenAI;
 
-	constructor(apiKey: string, apiBase: string) {
+	constructor({ apiKey, apiBase }: Record<string, string>) {
 		this.openai = new OpenAI({
 			apiKey,
 			baseURL: apiBase,
@@ -29,7 +29,7 @@ export class Openai implements IOpenai {
 			throw new Error('Empty chat completion');
 		} catch (error: unknown) {
 			throw new Error(
-				`Error while creating chat completion ${error instanceof Error && error.message}`,
+				`Error while creating chat completion ${error instanceof Error ? error.message : error}`,
 			);
 		}
 	}
@@ -46,7 +46,7 @@ export class Openai implements IOpenai {
 			throw new Error('Empty transcription');
 		} catch (error: unknown) {
 			throw new Error(
-				`Error while creating transcription ${error instanceof Error && error.message}`,
+				`Error while creating transcription ${error instanceof Error ? error.message : error}`,
 			);
 		}
 	}

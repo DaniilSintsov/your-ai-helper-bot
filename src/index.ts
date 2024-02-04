@@ -14,6 +14,8 @@ import { IOggConverter } from './services/oggConverter/oggConverter.types.js';
 import { OggConverter } from './services/oggConverter/oggConverter.js';
 import { IMessageService } from './services/message/message.types.js';
 import { MessageService } from './services/message/message.js';
+import { ISpeechKit } from './services/speechKit/speechKit.types.js';
+import { SpeechKit } from './services/speechKit/speechKit.js';
 
 function bootstrap(): IBootstrapReturn {
 	const appContainer = new Container();
@@ -25,7 +27,19 @@ function bootstrap(): IBootstrapReturn {
 		if (!process.env.OPENAI_API_BASE) {
 			throw new Error('OPENAI_API_BASE is not defined');
 		}
-		return new Openai(process.env.OPENAI_KEY, process.env.OPENAI_API_BASE);
+		return new Openai({ apiKey: process.env.OPENAI_KEY, apiBase: process.env.OPENAI_API_BASE });
+	});
+	appContainer.bind<ISpeechKit>(TYPES.SpeechKit).toDynamicValue(() => {
+		if (!process.env.SPEECH_KIT_API_KEY) {
+			throw new Error('SPEECH_KIT_API_KEY is not defined');
+		}
+		if (!process.env.SPEECH_KIT_API_BASE) {
+			throw new Error('SPEECH_KIT_API_BASE is not defined');
+		}
+		return new SpeechKit({
+			apiKey: process.env.SPEECH_KIT_API_KEY,
+			apiBase: process.env.SPEECH_KIT_API_BASE,
+		});
 	});
 	appContainer.bind<IOggConverter>(TYPES.OggConverter).to(OggConverter);
 	appContainer.bind<IMessageController>(TYPES.MessageController).to(MessageController);

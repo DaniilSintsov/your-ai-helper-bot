@@ -2,7 +2,7 @@ import { ICtxWithSession, TYPES } from '../../types.js';
 import { IMessageController } from './message.types.js';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
-import { ERROR_REPLIES, INITIAL_SESSION } from '../../constants/botInitials.js';
+import { ERROR_REPLIES, INITIAL_SESSION, STANDARD_REPLIES } from '../../constants/botInitials.js';
 import { ILoader } from '../../services/loader/loader.types.js';
 import { Loader } from '../../services/loader/loader.js';
 import { italic } from 'telegraf/format';
@@ -23,9 +23,12 @@ export class MessageController implements IMessageController {
 		await loader.show();
 
 		try {
-			const text: string = await this.messageService.handleVoice(ctx);
-			loader.hide();
-			await ctx.reply(text);
+			const { response, transcription } = await this.messageService.handleVoice(ctx);
+			await loader.hide();
+			await ctx.replyWithMarkdown(
+				`${STANDARD_REPLIES.afterVoiceRequest} \`${transcription}\``,
+			);
+			await ctx.replyWithMarkdown(response);
 		} catch (error: unknown) {
 			await loader.hide();
 			await ctx.reply(italic(ERROR_REPLIES.transcription));
