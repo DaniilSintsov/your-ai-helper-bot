@@ -6,6 +6,7 @@ import { session, Telegraf } from 'telegraf';
 import { message } from 'telegraf/filters';
 import { ICommandController } from './controllers/command/command.types.js';
 import { IMessageController } from './controllers/message/message.types.js';
+import { ILogger } from './services/logger/logger.types.js';
 
 @injectable()
 export class App {
@@ -14,6 +15,7 @@ export class App {
 	constructor(
 		@inject(TYPES.CommandController) private readonly commandController: ICommandController,
 		@inject(TYPES.MessageController) private readonly messageController: IMessageController,
+		@inject(TYPES.Logger) private readonly logger: ILogger,
 	) {
 		if (!process.env.BOT_TOKEN) {
 			throw new Error('BOT_TOKEN is not defined');
@@ -33,12 +35,19 @@ export class App {
 	private useMessages(): void {
 		this.bot.on(message('text'), this.messageController.text.bind(this.messageController));
 		this.bot.on(message('voice'), this.messageController.voice.bind(this.messageController));
+		this.bot.on(message('sticker'), async ctx => {
+			console.log(ctx);
+		});
 	}
 
 	public async init(): Promise<void> {
 		this.useMiddlewares();
 		this.useCommands();
 		this.useMessages();
+		this.useMessages();
+		this.bot.catch((error: unknown) =>
+			this.logger.error(error instanceof Error ? error.message : error),
+		);
 		await this.bot.launch();
 	}
 

@@ -57,3 +57,8 @@ export const { app, appContainer } = bootstrap();
 
 process.once('SIGINT', () => app.kill('SIGINT'));
 process.once('SIGTERM', () => app.kill('SIGTERM'));
+
+process.on('uncaughtException', error => {
+	appContainer.get<ILogger>(TYPES.Logger).error(error);
+	process.exit(1);
+});

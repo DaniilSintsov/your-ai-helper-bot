@@ -2,7 +2,12 @@ import { ICtxWithSession, TYPES } from '../../types.js';
 import { IMessageController } from './message.types.js';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
-import { ERROR_REPLIES, INITIAL_SESSION, STANDARD_REPLIES } from '../../constants/botInitials.js';
+import {
+	ANIMATED_LOADER_FILE,
+	ERROR_REPLIES,
+	INITIAL_SESSION,
+	STANDARD_REPLIES,
+} from '../../constants/botInitials.js';
 import { ILoader } from '../../services/loader/loader.types.js';
 import { Loader } from '../../services/loader/loader.js';
 import { italic } from 'telegraf/format';
@@ -17,18 +22,25 @@ export class MessageController implements IMessageController {
 	) {}
 
 	async voice(ctx: ICtxWithSession): Promise<void> {
-		ctx.session ??= INITIAL_SESSION;
-
-		const loader: ILoader = new Loader(ctx, this.logger);
-		await loader.show();
+		const loader: ILoader = new Loader({
+			ctx,
+			logger: this.logger,
+			textForMessage: STANDARD_REPLIES.loader,
+			fileForAnimatedMessage: ANIMATED_LOADER_FILE,
+		});
 
 		try {
+			ctx.session ??= INITIAL_SESSION;
+			await loader.show();
 			const { response, transcription } = await this.messageService.handleVoice(ctx);
 			await loader.hide();
-			await ctx.replyWithMarkdown(
-				`${STANDARD_REPLIES.afterVoiceRequest} \`${transcription}\``,
+			await ctx.reply(
+				`_${STANDARD_REPLIES.transcriptionCaption}_:\n\`\`\`\n${transcription}\n\`\`\``,
+				{
+					parse_mode: 'Markdown',
+				},
 			);
-			await ctx.replyWithMarkdown(response);
+			await ctx.reply(response, { parse_mode: 'Markdown' });
 		} catch (error: unknown) {
 			await loader.hide();
 			await ctx.reply(italic(ERROR_REPLIES.transcription));
@@ -40,15 +52,19 @@ export class MessageController implements IMessageController {
 	}
 
 	async text(ctx: ICtxWithSession): Promise<void> {
-		ctx.session ??= INITIAL_SESSION;
-
-		const loader: ILoader = new Loader(ctx, this.logger);
-		await loader.show();
+		const loader: ILoader = new Loader({
+			ctx,
+			logger: this.logger,
+			textForMessage: STANDARD_REPLIES.loader,
+			fileForAnimatedMessage: ANIMATED_LOADER_FILE,
+		});
 
 		try {
+			ctx.session ??= INITIAL_SESSION;
+			await loader.show();
 			const response: string = await this.messageService.handleText(ctx);
 			await loader.hide();
-			await ctx.replyWithMarkdown(response);
+			await ctx.reply(response, { parse_mode: 'Markdown' });
 		} catch (error: unknown) {
 			await loader.hide();
 			await ctx.reply(italic(ERROR_REPLIES.chat));
