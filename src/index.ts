@@ -16,32 +16,16 @@ import { IMessageService } from './services/message/message.types.js';
 import { MessageService } from './services/message/message.js';
 import { ISpeechKit } from './services/speechKit/speechKit.types.js';
 import { SpeechKit } from './services/speechKit/speechKit.js';
+import { IConfigService } from './services/config/config.types.js';
+import { ConfigService } from './services/config/config.js';
 
 function bootstrap(): IBootstrapReturn {
 	const appContainer = new Container();
-	appContainer.bind<ILogger>(TYPES.Logger).to(LoggerService);
-	appContainer.bind<IOpenai>(TYPES.Openai).toDynamicValue(() => {
-		if (!process.env.OPENAI_KEY) {
-			throw new Error('OPENAI_KEY is not defined');
-		}
-		if (!process.env.OPENAI_API_BASE) {
-			throw new Error('OPENAI_API_BASE is not defined');
-		}
-		return new Openai({ apiKey: process.env.OPENAI_KEY, apiBase: process.env.OPENAI_API_BASE });
-	});
-	appContainer.bind<ISpeechKit>(TYPES.SpeechKit).toDynamicValue(() => {
-		if (!process.env.SPEECH_KIT_API_KEY) {
-			throw new Error('SPEECH_KIT_API_KEY is not defined');
-		}
-		if (!process.env.SPEECH_KIT_API_BASE) {
-			throw new Error('SPEECH_KIT_API_BASE is not defined');
-		}
-		return new SpeechKit({
-			apiKey: process.env.SPEECH_KIT_API_KEY,
-			apiBase: process.env.SPEECH_KIT_API_BASE,
-		});
-	});
-	appContainer.bind<IOggConverter>(TYPES.OggConverter).to(OggConverter);
+	appContainer.bind<ILogger>(TYPES.Logger).to(LoggerService).inSingletonScope();
+	appContainer.bind<IConfigService>(TYPES.ConfigService).to(ConfigService).inSingletonScope();
+	appContainer.bind<IOpenai>(TYPES.Openai).to(Openai).inSingletonScope();
+	appContainer.bind<ISpeechKit>(TYPES.SpeechKit).to(SpeechKit).inSingletonScope();
+	appContainer.bind<IOggConverter>(TYPES.OggConverter).to(OggConverter).inSingletonScope();
 	appContainer.bind<IMessageController>(TYPES.MessageController).to(MessageController);
 	appContainer.bind<IMessageService>(TYPES.MessageService).to(MessageService);
 	appContainer.bind<ICommandController>(TYPES.CommandController).to(CommandController);

@@ -1,12 +1,12 @@
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
-import 'dotenv/config';
 import { ICtxWithSession, TYPES } from './types.js';
 import { session, Telegraf } from 'telegraf';
 import { message } from 'telegraf/filters';
 import { ICommandController } from './controllers/command/command.types.js';
 import { IMessageController } from './controllers/message/message.types.js';
 import { ILogger } from './services/logger/logger.types.js';
+import { IConfigService } from './services/config/config.types.js';
 
 @injectable()
 export class App {
@@ -16,11 +16,9 @@ export class App {
 		@inject(TYPES.CommandController) private readonly commandController: ICommandController,
 		@inject(TYPES.MessageController) private readonly messageController: IMessageController,
 		@inject(TYPES.Logger) private readonly logger: ILogger,
+		@inject(TYPES.ConfigService) private readonly configService: IConfigService,
 	) {
-		if (!process.env.BOT_TOKEN) {
-			throw new Error('BOT_TOKEN is not defined');
-		}
-		this.bot = new Telegraf<ICtxWithSession>(process.env.BOT_TOKEN);
+		this.bot = new Telegraf<ICtxWithSession>(this.configService.get('BOT_TOKEN'));
 	}
 
 	private useMiddlewares(): void {

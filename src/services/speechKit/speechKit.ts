@@ -1,17 +1,19 @@
 import { ISpeechKit } from './speechKit.types.js';
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
 import { createReadStream } from 'fs';
 import axios, { AxiosRequestConfig } from 'axios';
+import { IConfigService } from '../config/config.types.js';
+import { TYPES } from '../../types.js';
 
 @injectable()
 export class SpeechKit implements ISpeechKit {
 	private readonly apiKey: string;
 	private readonly apiBase: string;
 
-	constructor({ apiKey, apiBase }: Record<string, string>) {
-		this.apiKey = apiKey;
-		this.apiBase = apiBase;
+	constructor(@inject(TYPES.ConfigService) private readonly configService: IConfigService) {
+		this.apiKey = this.configService.get('SPEECH_KIT_API_KEY');
+		this.apiBase = this.configService.get('SPEECH_KIT_API_BASE');
 	}
 
 	private getBuffer(filepath: string): Promise<Buffer> {

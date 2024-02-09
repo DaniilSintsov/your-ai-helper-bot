@@ -12,6 +12,7 @@ export const TYPES = {
 	MessageService: Symbol.for('MessageService'),
 	Openai: Symbol.for('Openai'),
 	SpeechKit: Symbol.for('SpeechKit'),
+	ConfigService: Symbol.for('ConfigService'),
 };
 
 export interface ICtxWithSession extends Context {

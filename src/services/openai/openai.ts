@@ -2,17 +2,19 @@ import OpenAI from 'openai';
 import { createReadStream } from 'fs';
 import { IOpenai } from './openai.types.js';
 import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
+import { TYPES } from '../../types.js';
+import { IConfigService } from '../config/config.types.js';
 
 @injectable()
 export class Openai implements IOpenai {
 	private openai: OpenAI;
 
-	constructor({ apiKey, apiBase }: Record<string, string>) {
+	constructor(@inject(TYPES.ConfigService) private readonly configService: IConfigService) {
 		this.openai = new OpenAI({
-			apiKey,
-			baseURL: apiBase,
+			apiKey: this.configService.get('OPENAI_KEY'),
+			baseURL: this.configService.get('OPENAI_API_BASE'),
 		});
 	}
 
