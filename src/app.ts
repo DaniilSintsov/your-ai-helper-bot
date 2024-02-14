@@ -33,15 +33,11 @@ export class App {
 	private useMessages(): void {
 		this.bot.on(message('text'), this.messageController.text.bind(this.messageController));
 		this.bot.on(message('voice'), this.messageController.voice.bind(this.messageController));
-		this.bot.on(message('sticker'), async ctx => {
-			console.log(ctx);
-		});
 	}
 
 	public async init(): Promise<void> {
 		this.useMiddlewares();
 		this.useCommands();
-		this.useMessages();
 		this.useMessages();
 		this.bot.catch((error: unknown) =>
 			this.logger.error(error instanceof Error ? error.message : error),
