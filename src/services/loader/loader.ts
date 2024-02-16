@@ -3,32 +3,24 @@ import { italic } from 'telegraf/format';
 import { ILoader, ILoaderConstructor } from './loader.types.js';
 import { ICtxWithSession } from '../../types.js';
 import { ILogger } from '../logger/logger.types.js';
-import { dirname, resolve } from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+import { ANIMATED_LOADER_STICKER_ID, STANDARD_REPLIES } from '../../constants/botInitials.js';
 
 export class Loader implements ILoader {
 	private textMessage: Message | null = null;
 	private animatedMessage: Message | null = null;
 	private ctx: ICtxWithSession;
-	private readonly textForMessage: string;
-	private readonly fileForAnimatedMessage: string;
 	private readonly logger: ILogger;
 
-	constructor({ ctx, textForMessage, fileForAnimatedMessage, logger }: ILoaderConstructor) {
+	constructor({ ctx, logger }: ILoaderConstructor) {
 		this.ctx = ctx;
-		this.textForMessage = textForMessage;
-		this.fileForAnimatedMessage = fileForAnimatedMessage;
 		this.logger = logger;
 	}
 
 	async show(): Promise<void> {
 		try {
-			this.textMessage = await this.ctx.reply(italic(this.textForMessage));
-			this.animatedMessage = await this.ctx.replyWithSticker({
-				source: resolve(__dirname, '../../../assets', this.fileForAnimatedMessage),
-			});
+			this.textMessage = await this.ctx.reply(italic(STANDARD_REPLIES.loader));
+
+			this.animatedMessage = await this.ctx.replyWithSticker(ANIMATED_LOADER_STICKER_ID);
 		} catch (error: unknown) {
 			this.logger.error(
 				`Error while showing loader ${error instanceof Error ? error.message : error}`,

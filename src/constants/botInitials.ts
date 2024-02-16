@@ -17,4 +17,5 @@ export const ERROR_REPLIES: Record<string, string> = {
 	transcription: 'Что-то пошло не так. Попробуйте ещё раз позже',
 };
 
-export const ANIMATED_LOADER_FILE: string = 'AnimatedSticker.tgs';
+export const ANIMATED_LOADER_STICKER_ID: string =
+	'CAACAgIAAxkBAAELayNlz6p6YX-tSPp-3aDr-3khcUyOEQACXVwBAAFji0YMAmwfMcrceRk0BA';

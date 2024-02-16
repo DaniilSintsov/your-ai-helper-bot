@@ -2,12 +2,7 @@ import { ICtxWithSession, TYPES } from '../../types.js';
 import { IMessageController } from './message.types.js';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
-import {
-	ANIMATED_LOADER_FILE,
-	ERROR_REPLIES,
-	INITIAL_SESSION,
-	STANDARD_REPLIES,
-} from '../../constants/botInitials.js';
+import { ERROR_REPLIES, INITIAL_SESSION, STANDARD_REPLIES } from '../../constants/botInitials.js';
 import { ILoader } from '../../services/loader/loader.types.js';
 import { Loader } from '../../services/loader/loader.js';
 import { italic } from 'telegraf/format';
@@ -25,8 +20,6 @@ export class MessageController implements IMessageController {
 		const loader: ILoader = new Loader({
 			ctx,
 			logger: this.logger,
-			textForMessage: STANDARD_REPLIES.loader,
-			fileForAnimatedMessage: ANIMATED_LOADER_FILE,
 		});
 
 		try {
@@ -55,8 +48,6 @@ export class MessageController implements IMessageController {
 		const loader: ILoader = new Loader({
 			ctx,
 			logger: this.logger,
-			textForMessage: STANDARD_REPLIES.loader,
-			fileForAnimatedMessage: ANIMATED_LOADER_FILE,
 		});
 
 		try {

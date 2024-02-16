@@ -9,7 +9,5 @@ export interface ILoader {
 
 export interface ILoaderConstructor {
 	ctx: ICtxWithSession;
-	textForMessage: string;
-	fileForAnimatedMessage: string;
 	logger: ILogger;
 }
